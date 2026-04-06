@@ -1,19 +1,20 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
 <!DOCTYPE html>
 
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ZelmanLabs.UI.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css"/>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <title>Index</title>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -32,23 +33,21 @@
                     00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
                 </a>
                 <div class="dropdown ms-4 nav-color">
-                    <button class="btn btn-secondary dropdown-toggle"
-                            type="button" id="dropdownMenuButton"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                         User@gmail.com
-                        <img src="images/default-profile-picture.png" width="30"
-                             alt="User" class="rounded nav-color" />
+                        <img src="images/default-profile-picture.png" width="30" alt="User" class="rounded nav-color" />
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <li>
                             <span class="dropdown-item-text">
-                                <img src="images/default-profile-picture.png"
-                                     width="50" alt="User" class="rounded" />
+                                <img src="images/default-profile-picture.png" width="50" alt="User" class="rounded" />
                                 user@gmail.com
                             </span>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <form id="logoutForm" class="form-inline" action="#">
                                 <button id="logout" type="submit" class="nav-link
@@ -72,13 +71,13 @@
         <div class="row mb-4">
             <div class="col-sm-12">
                 <h2>Список</h2>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li>А. элемент 0 списка</li>
-                    <li>В. элемент 1 списка</li>
-                    <li>С. элемент 2 списка</li>
-                    <li>D. элемент 3 списка</li>
-                    <li>Е. элемент 4 списка</li>
-                </ul>
+                <ol style="list-style-type: upper-alpha; padding-left: 20px;">
+                    <li> элемент 0 списка</li>
+                    <li> элемент 1 списка</li>
+                    <li> элемент 2 списка</li>
+                    <li> элемент 3 списка</li>
+                    <li> элемент 4 списка</li>
+                </ol>
             </div>
         </div>
 
@@ -132,7 +131,8 @@
                     <label for="login" class="form-label fw-bold">Логин:</label>
                 </div>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="login" id="login" placeholder="Введите имя" style="width: 300px;">
+                    <input type="text" class="form-control" name="login" id="login" placeholder="Введите имя"
+                           style="width: 300px;">
                 </div>
             </div>
 
@@ -142,7 +142,8 @@
                     <label for="password" class="form-label fw-bold">Пароль:</label>
                 </div>
                 <div class="col-sm-10">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Введите пароль" style="width: 300px;">
+                    <input type="password" class="form-control" name="password" id="password"
+                           placeholder="Введите пароль" style="width: 300px;">
                 </div>
             </div>
 
@@ -177,4 +178,5 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
+
 </html>
