@@ -1,0 +1,7 @@
+@{
+  var total = (double)ViewData["total"];
+}
+
+<a asp-controller="cart" asp-action="index" class="navbar-text ms-auto">
+  @total руб <i class="fa-solid fa-cart-shopping"></i> (0)
+</a>
