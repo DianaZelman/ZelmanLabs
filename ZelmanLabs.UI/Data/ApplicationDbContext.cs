@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ZelmanLabs.UI.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
     }
 }
