@@ -1,23 +1,42 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using ZelmanLabs.UI.Data;
 
 namespace ZelmanLabs.UI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("SqlLiteConnection") ?? throw new InvalidOperationException("Connection string 'SqlLiteConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlite(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            builder.Services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("admin", p =>
+                p.RequireClaim(ClaimTypes.Role, "admin"));
+            });
+
+            builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -46,6 +65,8 @@ namespace ZelmanLabs.UI
                 .WithStaticAssets();
             app.MapRazorPages()
                .WithStaticAssets();
+
+            await DbInitializer.SetupIdentityAdmin(app);
 
             app.Run();
         }

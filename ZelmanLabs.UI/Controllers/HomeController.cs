@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ZelmanLabs.UI.Models;
 
@@ -13,6 +14,8 @@ namespace ZelmanLabs.UI.Controllers
             new ListDemo { Id = 3, Name = "Item 3" }
         };
 
+        //TODO: change logic
+        [Authorize(Policy = "admin")]
         public IActionResult Index()
         {
             ViewData["text"] = "Лабораторная работа №2";
