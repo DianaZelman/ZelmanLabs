@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Plugins;
 using ZelmanLabs.UI.Data;
+using ZelmanLabs.UI.Services;
 
 namespace ZelmanLabs.UI
 {
@@ -36,6 +37,9 @@ namespace ZelmanLabs.UI
             });
 
             builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
+
+            builder.Services.AddTransient<ICarService, MemoryCarService>();
+            builder.Services.AddTransient<ICategoryService, MemoryCategoryService>();
 
             builder.Services.AddControllersWithViews();
 
