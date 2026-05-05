@@ -4,6 +4,6 @@ namespace ZelmanLabs.UI.Data
 {
   public class ApplicationUser : IdentityUser
   {
-
+    public byte[] Avatar { get; set; }
   }
 }

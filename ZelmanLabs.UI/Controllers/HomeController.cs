@@ -15,7 +15,7 @@ namespace ZelmanLabs.UI.Controllers
         };
 
         //TODO: change logic
-        [Authorize(Policy = "admin")]
+        // [Authorize(Policy = "admin")]
         public IActionResult Index()
         {
             ViewData["text"] = "Лабораторная работа №2";

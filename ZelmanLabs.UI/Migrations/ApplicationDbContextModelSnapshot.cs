@@ -157,6 +157,10 @@ namespace ZelmanLabs.UI.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<byte[]>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
