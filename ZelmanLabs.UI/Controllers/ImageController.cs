@@ -18,7 +18,7 @@ public class ImageController(UserManager<ApplicationUser> um, IWebHostEnvironmen
     }
 
     var root = env.WebRootPath;
-    var path = Path.Combine(root, "images", "default-profile-picture.png");
-    return File(path, "image/png");
+    var path = Path.Combine(root, "images", "default-profile-picture.jpg");
+    return File(path, "image/jpg");
   }
 }

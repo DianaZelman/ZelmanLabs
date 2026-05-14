@@ -4,9 +4,11 @@ namespace ZelmanLabs.UI.Services
   {
     private List<Car> _cars;
     private List<Category> _categories;
+    private readonly IConfiguration _config;
 
-    public MemoryCarService(ICategoryService categoryService)
+    public MemoryCarService(ICategoryService categoryService, IConfiguration config)
     {
+      _config = config;
       var response = categoryService.GetCategoryListAsync().Result;
       if (response.Success && response.Data != null)
       {
@@ -105,6 +107,8 @@ namespace ZelmanLabs.UI.Services
     {
       var result = new ResponseData<ListModel<Car>>();
 
+      int pageSize = _config.GetValue<int>("ItemsPerPage");
+
       // Id категории для фильтрации
       int? categoryId = null;
 
@@ -123,14 +127,32 @@ namespace ZelmanLabs.UI.Services
           .Where(c => categoryId == null || c.CategoryId == categoryId)
           .ToList();
 
-      // Поместить данные в объект результата
-      result.Data = new ListModel<Car>() { Items = filteredCars };
+      // вычисляем общее количество страниц
+      int totalPages = (int)Math.Ceiling(filteredCars.Count / (double)pageSize);
+
+      // выбираем только нужную страницу
+      var pageItems = filteredCars
+          .Skip((pageNo - 1) * pageSize)
+          .Take(pageSize)
+          .ToList();
+
+      // заполняем модель с пагинацией
+      result.Data = new ListModel<Car>()
+      {
+        Items = pageItems,
+        CurrentPage = pageNo,
+        TotalPages = totalPages
+      };
 
       // Если список пустой
-      if (filteredCars.Count == 0)
+      if (pageItems.Count == 0)
       {
         result.Success = false;
         result.ErrorMessage = "Нет автомобилей в выбранной категории";
+      }
+      else
+      {
+        result.Success = true;
       }
 
       return Task.FromResult(result);
