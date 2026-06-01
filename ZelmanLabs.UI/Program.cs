@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Plugins;
+// using NuGet.Protocol.Plugins;
 using ZelmanLabs.UI.Data;
 using ZelmanLabs.UI.Services;
 
@@ -38,8 +38,14 @@ namespace ZelmanLabs.UI
 
             builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
 
-            builder.Services.AddTransient<ICarService, MemoryCarService>();
-            builder.Services.AddTransient<ICategoryService, MemoryCategoryService>();
+            // builder.Services.AddTransient<ICarService, MemoryCarService>();
+            // builder.Services.AddTransient<ICategoryService, MemoryCategoryService>();
+
+            builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
+                opt.BaseAddress = new Uri("http://localhost:5002/api/categories/"));
+
+            builder.Services.AddHttpClient<ICarService, ApiCarService>(opt =>
+                opt.BaseAddress = new Uri("http://localhost:5002/api/cars/"));
 
             builder.Services.AddControllersWithViews();
 
