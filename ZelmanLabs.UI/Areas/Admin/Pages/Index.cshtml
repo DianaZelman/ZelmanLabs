@@ -1,0 +1,69 @@
+@page
+@model ZelmanLabs.UI.Areas.Admin.Pages.IndexModel
+@{
+  ViewData["Title"] = "Управление автомобилями";
+}
+
+<style>
+  .description-column {
+    max-width: 250px;
+    word-wrap: break-word;
+  }
+</style>
+
+<h1>Управление автомобилями</h1>
+
+<p>
+  <a asp-page="Create" class="btn btn-primary">Создать новый</a>
+</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th class="description-column">Описание</th>
+      <th>Цена</th>
+      <th>Л.с.</th>
+      <th>Изображение</th>
+      <th>Категория</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model.Cars)
+    {
+      <tr>
+        <td>@item.Name</td>
+        <td class="description-column">@item.Description</td>
+        <td>@item.Price.ToString("F0")$</td>
+        <td>@item.Horsepower</td>
+        <td>
+          @if (!string.IsNullOrEmpty(item.Image))
+          {
+            <img src="@item.Image" style="width:80px" />
+          }
+        </td>
+        <td>@item.Category?.Name</td>
+        <td>
+          <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+          <a asp-page="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+          <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+  <nav>
+    <ul class="pagination">
+      @for (int i = 1; i <= Model.TotalPages; i++)
+      {
+        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+          <a class="page-link" asp-page="Index" asp-route-pageNo="@i">@i</a>
+        </li>
+      }
+    </ul>
+  </nav>
+}
