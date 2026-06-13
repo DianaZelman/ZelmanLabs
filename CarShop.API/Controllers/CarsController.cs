@@ -12,11 +12,13 @@ public class CarsController : ControllerBase
 {
   private readonly AppDbContext _context;
   private readonly IConfiguration _configuration;
+  private readonly IWebHostEnvironment _env;  // ДОБАВИТЬ
 
-  public CarsController(AppDbContext context, IConfiguration configuration)
+  public CarsController(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env)  // ДОБАВИТЬ env
   {
     _context = context;
     _configuration = configuration;
+    _env = env;  // ДОБАВИТЬ
   }
 
   // GET: api/cars?category=sportcars&pageNo=1&pageSize=3
@@ -28,18 +30,15 @@ public class CarsController : ControllerBase
   {
     var result = new ResponseData<ListModel<Car>>();
 
-    // Загружаем машины с категориями
     var query = _context.Cars
         .Include(c => c.Category)
         .AsQueryable();
 
-    // Фильтрация по категории
     if (!string.IsNullOrEmpty(category))
     {
       query = query.Where(c => c.Category != null && c.Category.NormalizedName == category);
     }
 
-    // Подсчет общего количества
     var totalItems = await query.CountAsync();
     var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -48,13 +47,11 @@ public class CarsController : ControllerBase
       pageNo = totalPages;
     }
 
-    // Получаем данные для страницы
     var items = await query
         .Skip((pageNo - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
 
-    // Формируем результат
     result.Data = new ListModel<Car>
     {
       Items = items,
@@ -93,5 +90,176 @@ public class CarsController : ControllerBase
       Data = car,
       Success = true
     });
+  }
+
+  // НОВЫЙ МЕТОД: POST: api/cars - создание автомобиля
+  [HttpPost]
+  public async Task<ActionResult<ResponseData<Car>>> CreateCar([FromBody] Car car)
+  {
+    try
+    {
+      // Проверяем, существует ли категория
+      if (car.CategoryId > 0)
+      {
+        var category = await _context.Categories.FindAsync(car.CategoryId);
+        if (category != null)
+        {
+          car.Category = category;
+        }
+      }
+
+      await _context.Cars.AddAsync(car);
+      await _context.SaveChangesAsync();
+
+      return Ok(new ResponseData<Car>
+      {
+        Data = car,
+        Success = true
+      });
+    }
+    catch (Exception ex)
+    {
+      return BadRequest(new ResponseData<Car>
+      {
+        Success = false,
+        ErrorMessage = ex.Message
+      });
+    }
+  }
+
+  // НОВЫЙ МЕТОД: PUT: api/cars/5 - обновление автомобиля
+  [HttpPut("{id}")]
+  public async Task<IActionResult> UpdateCar(int id, [FromBody] Car car)
+  {
+    if (id != car.Id)
+    {
+      return BadRequest(new ResponseData<Car>
+      {
+        Success = false,
+        ErrorMessage = "ID mismatch"
+      });
+    }
+
+    var existingCar = await _context.Cars.FindAsync(id);
+    if (existingCar == null)
+    {
+      return NotFound(new ResponseData<Car>
+      {
+        Success = false,
+        ErrorMessage = "Car not found"
+      });
+    }
+
+    // Обновляем поля
+    existingCar.Name = car.Name;
+    existingCar.Description = car.Description;
+    existingCar.Price = car.Price;
+    existingCar.Horsepower = car.Horsepower;
+    existingCar.CategoryId = car.CategoryId;
+
+    try
+    {
+      await _context.SaveChangesAsync();
+      return Ok(new ResponseData<Car>
+      {
+        Data = existingCar,
+        Success = true
+      });
+    }
+    catch (Exception ex)
+    {
+      return BadRequest(new ResponseData<Car>
+      {
+        Success = false,
+        ErrorMessage = ex.Message
+      });
+    }
+  }
+
+  // НОВЫЙ МЕТОД: DELETE: api/cars/5 - удаление автомобиля
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> DeleteCar(int id)
+  {
+    var car = await _context.Cars.FindAsync(id);
+    if (car == null)
+    {
+      return NotFound(new ResponseData<Car>
+      {
+        Success = false,
+        ErrorMessage = "Car not found"
+      });
+    }
+
+    // Удаляем файл изображения, если есть
+    if (!string.IsNullOrEmpty(car.Image))
+    {
+      var imagePath = Path.Combine(_env.WebRootPath, "Images", Path.GetFileName(car.Image));
+      if (System.IO.File.Exists(imagePath))
+      {
+        System.IO.File.Delete(imagePath);
+      }
+    }
+
+    _context.Cars.Remove(car);
+    await _context.SaveChangesAsync();
+
+    return Ok(new ResponseData<Car>
+    {
+      Success = true
+    });
+  }
+
+  // НОВЫЙ МЕТОД: POST: api/cars/{id}/image - сохранение изображения
+  [HttpPost("{id}/image")]
+  public async Task<IActionResult> SaveImage(int id, IFormFile image)
+  {
+    var car = await _context.Cars.FindAsync(id);
+    if (car == null)
+    {
+      return NotFound(new { error = "Car not found" });
+    }
+
+    if (image == null || image.Length == 0)
+    {
+      return BadRequest(new { error = "No image file" });
+    }
+
+    // Путь к папке wwwroot/Images
+    var imagesPath = Path.Combine(_env.WebRootPath, "Images");
+    if (!Directory.Exists(imagesPath))
+    {
+      Directory.CreateDirectory(imagesPath);
+    }
+
+    // Случайное имя файла
+    var randomName = Path.GetRandomFileName();
+    var extension = Path.GetExtension(image.FileName);
+    var fileName = Path.ChangeExtension(randomName, extension);
+    var filePath = Path.Combine(imagesPath, fileName);
+
+    // Сохраняем файл
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+      await image.CopyToAsync(stream);
+    }
+
+    // Формируем URL
+    var host = $"{Request.Scheme}://{Request.Host}";
+    var imageUrl = $"{host}/Images/{fileName}";
+
+    // Удаляем старое изображение, если есть
+    if (!string.IsNullOrEmpty(car.Image))
+    {
+      var oldImagePath = Path.Combine(_env.WebRootPath, "Images", Path.GetFileName(car.Image));
+      if (System.IO.File.Exists(oldImagePath))
+      {
+        System.IO.File.Delete(oldImagePath);
+      }
+    }
+
+    car.Image = imageUrl;
+    await _context.SaveChangesAsync();
+
+    return Ok(new { url = imageUrl });
   }
 }

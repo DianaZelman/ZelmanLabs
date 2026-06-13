@@ -1,0 +1,46 @@
+@page
+@model ZelmanLabs.UI.Areas.Admin.Pages.DeleteModel
+@{
+  ViewData["Title"] = "Удалить автомобиль";
+}
+
+<h1>Удалить автомобиль</h1>
+
+<div class="alert alert-danger">
+  <h3>Вы уверены, что хотите удалить этот автомобиль?</h3>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-sm-3">Название</dt>
+      <dd class="col-sm-9">@Model.Car.Name</dd>
+
+      <dt class="col-sm-3">Описание</dt>
+      <dd class="col-sm-9">@Model.Car.Description</dd>
+
+      <dt class="col-sm-3">Цена</dt>
+      <dd class="col-sm-9">@Model.Car.Price</dd>
+
+      <dt class="col-sm-3">Л.с.</dt>
+      <dd class="col-sm-9">@Model.Car.Horsepower</dd>
+
+      <dt class="col-sm-3">Категория</dt>
+      <dd class="col-sm-9">@Model.Car.Category?.Name</dd>
+
+      <dt class="col-sm-3">Изображение</dt>
+      <dd class="col-sm-9">
+        @if (!string.IsNullOrEmpty(Model.Car.Image))
+        {
+          <img src="@Model.Car.Image" style="width:150px" />
+        }
+      </dd>
+    </dl>
+
+    <form method="post">
+      <input type="hidden" asp-for="Car.Id" />
+      <input type="submit" value="Удалить" class="btn btn-danger" />
+      <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
+    </form>
+  </div>
+</div>

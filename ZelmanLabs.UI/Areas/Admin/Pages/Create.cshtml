@@ -1,0 +1,62 @@
+@page
+@model ZelmanLabs.UI.Areas.Admin.Pages.CreateModel
+@{
+  ViewData["Title"] = "Создать автомобиль";
+}
+
+<h1>Создать автомобиль</h1>
+
+<div class="row">
+  <div class="col-md-6">
+    <form method="post" enctype="multipart/form-data">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Car.Name" class="control-label"></label>
+        <input asp-for="Car.Name" class="form-control" />
+        <span asp-validation-for="Car.Name" class="text-danger"></span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Car.Description" class="control-label"></label>
+        <textarea asp-for="Car.Description" class="form-control"></textarea>
+        <span asp-validation-for="Car.Description" class="text-danger"></span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Car.Price" class="control-label"></label>
+        <input asp-for="Car.Price" class="form-control" />
+        <span asp-validation-for="Car.Price" class="text-danger"></span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Car.Horsepower" class="control-label"></label>
+        <input asp-for="Car.Horsepower" class="form-control" />
+        <span asp-validation-for="Car.Horsepower" class="text-danger"></span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Car.CategoryId" class="control-label">Категория</label>
+        <select asp-for="Car.CategoryId" asp-items="Model.Categories" class="form-control"></select>
+        <span asp-validation-for="Car.CategoryId" class="text-danger"></span>
+      </div>
+
+      <div class="form-group mb-3">
+        <label asp-for="Image" class="control-label">Изображение</label>
+        <input asp-for="Image" type="file" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+      </div>
+
+      <div class="form-group d-flex flex-column gap-2">
+        <input type="submit" value="Создать" class="btn btn-primary" />
+        <a asp-page="Index" class="btn btn-secondary mb-4">Назад к списку</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}

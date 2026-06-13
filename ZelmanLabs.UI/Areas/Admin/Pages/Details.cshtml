@@ -1,0 +1,41 @@
+@page
+@model ZelmanLabs.UI.Areas.Admin.Pages.DetailsModel
+@{
+  ViewData["Title"] = "Детали автомобиля";
+}
+
+<h1>Детали автомобиля</h1>
+
+<div class="row">
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-sm-3">Название</dt>
+      <dd class="col-sm-9">@Model.Car.Name</dd>
+
+      <dt class="col-sm-3">Описание</dt>
+      <dd class="col-sm-9">@Model.Car.Description</dd>
+
+      <dt class="col-sm-3">Цена</dt>
+      <dd class="col-sm-9">@Model.Car.Price</dd>
+
+      <dt class="col-sm-3">Л.с.</dt>
+      <dd class="col-sm-9">@Model.Car.Horsepower</dd>
+
+      <dt class="col-sm-3">Категория</dt>
+      <dd class="col-sm-9">@Model.Car.Category?.Name</dd>
+
+      <dt class="col-sm-3">Изображение</dt>
+      <dd class="col-sm-9">
+        @if (!string.IsNullOrEmpty(Model.Car.Image))
+        {
+          <img src="@Model.Car.Image" style="width:200px" />
+        }
+      </dd>
+    </dl>
+
+    <div>
+      <a asp-page="Edit" asp-route-id="@Model.Car.Id" class="btn btn-warning">Редактировать</a>
+      <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
+    </div>
+  </div>
+</div>

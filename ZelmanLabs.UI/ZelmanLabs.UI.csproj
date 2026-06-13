@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarShop.Domain\CarShop.Domain.csproj" />
+    <ProjectReference Include="..\CarShop.API\CarShop.API.csproj" />
   </ItemGroup>
 
 </Project>
