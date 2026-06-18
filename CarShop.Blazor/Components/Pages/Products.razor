@@ -1,0 +1,28 @@
+@page "/products"
+@rendermode InteractiveServer
+@using CarShop.Blazor.Components.CarComponents
+
+<CascadingValue Value="CarService">
+  <CarsList CarSelected="ShowDetails" />
+  <Pager />
+</CascadingValue>
+
+<CarDetails Car="SelectedCar" />
+
+@code {
+  [Inject]
+  public ICarService CarService { get; set; } = default!;
+
+  [Parameter]
+  public Car? SelectedCar { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+    await CarService.GetCars();
+  }
+
+  void ShowDetails(int id)
+  {
+    SelectedCar = CarService.Cars.FirstOrDefault(c => c.Id == id);
+  }
+}

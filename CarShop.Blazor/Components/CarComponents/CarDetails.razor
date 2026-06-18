@@ -1,0 +1,24 @@
+@using CarShop.Domain.Entities
+
+@if (Car != null)
+{
+  <div class="card mt-5" style="width: 18rem;">
+    @if (!string.IsNullOrEmpty(Car.Image))
+    {
+      <img src="@Car.Image" class="card-img-top" alt="@Car.Name" style="height: 200px; object-fit: cover;" />
+    }
+    <div class="card-body">
+      <h5 class="card-title">@Car.Name</h5>
+      <p class="card-text">@Car.Description</p>
+      <p class="card-text"><strong>Цена:</strong> @Car.Price.ToString("F0") $</p>
+      <p class="card-text"><strong>Л.с.:</strong> @Car.Horsepower</p>
+      <p class="card-text"><strong>Категория:</strong> @Car.Category?.Name</p>
+      <span class="badge bg-primary">@Car.Price.ToString("F0") $</span>
+    </div>
+  </div>
+}
+
+@code {
+  [Parameter]
+  public Car? Car { get; set; }
+}
