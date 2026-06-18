@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 // using NuGet.Protocol.Plugins;
 using ZelmanLabs.UI.Data;
 using ZelmanLabs.UI.Services;
+using ZelmanLabs.UI.Middleware;
+using Serilog;
 
 namespace ZelmanLabs.UI
 {
@@ -12,6 +14,11 @@ namespace ZelmanLabs.UI
     {
         public static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -49,6 +56,14 @@ namespace ZelmanLabs.UI
 
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -68,6 +83,8 @@ namespace ZelmanLabs.UI
 
             app.UseAuthorization();
 
+            app.UseFileLogger();
+
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
@@ -77,6 +94,8 @@ namespace ZelmanLabs.UI
                .WithStaticAssets();
 
             await DbInitializer.SetupIdentityAdmin(app);
+
+            app.UseSession();
 
             app.Run();
         }

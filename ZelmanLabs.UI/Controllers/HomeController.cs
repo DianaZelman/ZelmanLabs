@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ZelmanLabs.UI.Models;
+using Serilog;
 
 namespace ZelmanLabs.UI.Controllers
 {
@@ -14,14 +15,12 @@ namespace ZelmanLabs.UI.Controllers
             new ListDemo { Id = 3, Name = "Item 3" }
         };
 
-        //TODO: change logic
-        // [Authorize(Policy = "admin")]
         public IActionResult Index()
         {
+            Log.Information("Hello из метода Index контроллера Home!");
+
             ViewData["text"] = "Лабораторная работа №2";
-
             SelectList data = new SelectList(_listData, "Id", "Name");
-
             return View(data);
         }
     }

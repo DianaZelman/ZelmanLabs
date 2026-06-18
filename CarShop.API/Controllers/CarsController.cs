@@ -12,13 +12,13 @@ public class CarsController : ControllerBase
 {
   private readonly AppDbContext _context;
   private readonly IConfiguration _configuration;
-  private readonly IWebHostEnvironment _env;  // ДОБАВИТЬ
+  private readonly IWebHostEnvironment _env;
 
-  public CarsController(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env)  // ДОБАВИТЬ env
+  public CarsController(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env)
   {
     _context = context;
     _configuration = configuration;
-    _env = env;  // ДОБАВИТЬ
+    _env = env;
   }
 
   // GET: api/cars?category=sportcars&pageNo=1&pageSize=3
@@ -92,13 +92,12 @@ public class CarsController : ControllerBase
     });
   }
 
-  // НОВЫЙ МЕТОД: POST: api/cars - создание автомобиля
+  // POST: api/cars - создание автомобиля
   [HttpPost]
   public async Task<ActionResult<ResponseData<Car>>> CreateCar([FromBody] Car car)
   {
     try
     {
-      // Проверяем, существует ли категория
       if (car.CategoryId > 0)
       {
         var category = await _context.Categories.FindAsync(car.CategoryId);
@@ -127,7 +126,7 @@ public class CarsController : ControllerBase
     }
   }
 
-  // НОВЫЙ МЕТОД: PUT: api/cars/5 - обновление автомобиля
+  // PUT: api/cars/5 - обновление автомобиля
   [HttpPut("{id}")]
   public async Task<IActionResult> UpdateCar(int id, [FromBody] Car car)
   {
@@ -176,7 +175,7 @@ public class CarsController : ControllerBase
     }
   }
 
-  // НОВЫЙ МЕТОД: DELETE: api/cars/5 - удаление автомобиля
+  // DELETE: api/cars/5 - удаление автомобиля
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteCar(int id)
   {
@@ -209,7 +208,7 @@ public class CarsController : ControllerBase
     });
   }
 
-  // НОВЫЙ МЕТОД: POST: api/cars/{id}/image - сохранение изображения
+  // POST: api/cars/{id}/image - сохранение изображения
   [HttpPost("{id}/image")]
   public async Task<IActionResult> SaveImage(int id, IFormFile image)
   {
@@ -224,7 +223,6 @@ public class CarsController : ControllerBase
       return BadRequest(new { error = "No image file" });
     }
 
-    // Путь к папке wwwroot/Images
     var imagesPath = Path.Combine(_env.WebRootPath, "Images");
     if (!Directory.Exists(imagesPath))
     {
