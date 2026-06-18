@@ -1,7 +1,8 @@
-@{
-  var total = (double)ViewData["total"];
-}
+@using CarShop.Domain.Modeles
+@model Cart
 
-<a asp-controller="cart" asp-action="index" class="navbar-text ms-auto">
-  @total руб <i class="fa-solid fa-cart-shopping"></i> (0)
+<a asp-controller="Cart" asp-action="Index" class="navbar-text ms-auto text-decoration-none">
+  <i class="fa-solid fa-cart-shopping"></i>
+  (@Model.Count)
+  <span class="ms-1">| @Model.CartItems.Values.Sum(x => x.Item.Price * x.Qty).ToString("F0") $</span>
 </a>

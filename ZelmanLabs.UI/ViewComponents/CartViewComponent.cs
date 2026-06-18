@@ -1,15 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using CarShop.Domain.Modeles;
+using ZelmanLabs.UI.Extensions;
 
-namespace ZelmanLabs.UI.ViewComponents
+namespace ZelmanLabs.UI.ViewComponents;
+
+/// <summary>
+/// Компонент для отображения корзины в меню
+/// </summary>
+public class CartViewComponent : ViewComponent
 {
-  public class CartViewComponent : ViewComponent
+  public IViewComponentResult Invoke()
   {
-    public IViewComponentResult Invoke()
-    {
-      //TODO: add logic for cart
-      ViewData["total"] = 100.5;
-
-      return View();
-    }
+    // Получаем корзину из сессии
+    var cart = HttpContext.Session.Get<Cart>("cart") ?? new Cart();
+    return View(cart);
   }
 }
