@@ -1,0 +1,52 @@
+@using CarShop.Blazor.Services
+@implements IDisposable
+@rendermode InteractiveServer
+
+@if (CarService.TotalPages > 1)
+{
+  <div class="btn-group mt-3" role="group" aria-label="Pager">
+    <button type="button" class="btn btn-outline-primary @(previousEnabled ? "" : "disabled")"
+            @onclick="@(() => OnPageSelected(CarService.CurrentPage - 1))">
+      <span aria-hidden="true">&laquo;</span>
+    </button>
+
+    @for (int i = 1; i <= CarService.TotalPages; i++)
+    {
+      var temp = i;
+      <button type="button" class="btn btn-outline-primary @(IsActive(temp) ? "active" : "")"
+              @onclick="@(() => OnPageSelected(temp))">
+        @temp
+      </button>
+    }
+
+    <button type="button" class="btn btn-outline-primary @(nextEnabled ? "" : "disabled")"
+            @onclick="@(() => OnPageSelected(CarService.CurrentPage + 1))">
+      <span aria-hidden="true">&raquo;</span>
+    </button>
+  </div>
+}
+
+@code {
+  [CascadingParameter]
+  public ICarService CarService { get; set; } = default!;
+
+  protected override void OnInitialized()
+  {
+    CarService.ListChanged += StateHasChanged;
+  }
+
+  private bool previousEnabled => CarService.CurrentPage != 1;
+  private bool nextEnabled => CarService.CurrentPage != CarService.TotalPages;
+
+  private bool IsActive(int pageNo) => pageNo == CarService.CurrentPage;
+
+  private async void OnPageSelected(int pageNo)
+  {
+    await CarService.GetCars(pageNo);
+  }
+
+  public void Dispose()
+  {
+    CarService.ListChanged -= StateHasChanged;
+  }
+}

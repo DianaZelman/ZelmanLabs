@@ -1,0 +1,57 @@
+@using CarShop.Blazor.Services
+@implements IDisposable
+@rendermode InteractiveServer
+
+<h3>Доступные автомобили</h3>
+
+@if (CarService.Cars != null && CarService.Cars.Any())
+{
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var car in CarService.Cars)
+      {
+        <tr>
+          <td>@car.Name</td>
+          <td>
+            <button class="btn btn-outline-dark" @onclick="() => OnCarSelected(car.Id)">
+              Подробно
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+else
+{
+  <p>Автомобили не найдены</p>
+}
+
+@code {
+  [CascadingParameter]
+  public ICarService CarService { get; set; } = default!;
+
+  [Parameter]
+  public EventCallback<int> CarSelected { get; set; }
+
+  protected override void OnInitialized()
+  {
+    CarService.ListChanged += StateHasChanged;
+  }
+
+  public async void OnCarSelected(int id)
+  {
+    await CarSelected.InvokeAsync(id);
+  }
+
+  public void Dispose()
+  {
+    CarService.ListChanged -= StateHasChanged;
+  }
+}
